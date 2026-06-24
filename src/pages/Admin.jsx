@@ -10,6 +10,7 @@ import {
   fmt,
 } from "../lib/split.js";
 import { downloadTemplate, parseDishesFile } from "../lib/excel.js";
+import { ADMIN_KEY } from "./AdminGate.jsx";
 
 const STEPS = ["Cargar platos", "Gestionar", "Publicar"];
 
@@ -84,9 +85,17 @@ export default function Admin() {
 
   const stepIndex = view === "load" ? 0 : view === "manage" ? 1 : 2;
 
+  function logout() {
+    localStorage.removeItem(ADMIN_KEY);
+    window.location.reload();
+  }
+
   return (
     <div className="container">
-      <div className="logo">Split · Admin</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
+        <div className="logo" style={{ marginBottom: 0 }}>Split · Admin</div>
+        <button className="btn btn-ghost" style={{ padding: "6px 13px", fontSize: 12.5 }} onClick={logout}>Salir</button>
+      </div>
 
       {view === "list" && (
         <BillsList onOpen={(b) => { setBill(b); setView("tracking"); }} onNew={startNew} />

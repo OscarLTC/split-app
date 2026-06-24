@@ -222,6 +222,9 @@ h2 { font-family: 'Plus Jakarta Sans','Inter',sans-serif; font-size: 17px; font-
 .sheet-actions { display: flex; gap: 10px; margin-top: 16px; }
 .sheet-actions .btn-primary { flex: 1; }
 
+/* Candado del gate admin */
+.lock-icon { width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-strong); display: flex; align-items: center; justify-content: center; }
+
 /* Bloque "Yapea aquí" (invitado) */
 .yape-box { background: #f3effc; border: 1px solid #e3d8fb; border-radius: var(--r); padding: 14px; margin-bottom: 15px; }
 .yape-title { font-size: 12px; font-weight: 700; color: #6b21d6; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }

@@ -4,6 +4,7 @@
 
 # Dependencias (si algún día usas el CLI de Supabase)
 node_modules/
+dist
 
 # Sistema
 .DS_Store
