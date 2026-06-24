@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Split — Paga tu parte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f9f9f8;
+    --surface: #ffffff;
+    --border: #e5e5e3;
+    --text: #1a1a18;
+    --muted: #6b6b68;
+    --accent: #1a1a18;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-border: #bbf7d0;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --amber-border: #fde68a;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --blue-border: #bfdbfe;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .container { max-width: 480px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .logo { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; margin-bottom: 2rem; }
+  h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .card:hover:not(.taken):not(.selected) { border-color: #a0a09e; }
+  .card.selected { border: 2px solid var(--accent); background: var(--surface); }
+  .card.taken { opacity: 0.5; cursor: not-allowed; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .card-name { font-size: 14px; font-weight: 500; flex: 1; min-width: 0; line-height: 1.4; }
+  .card-price { font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .card-footer { margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+  .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-taken { background: #f4f4f3; color: var(--muted); border: 1px solid var(--border); }
+  .checkout { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-top: 12px; display: none; }
+  .checkout.active { display: block; }
+  .checkout h2 { font-size: 16px; font-weight: 600; margin-bottom: 1rem; }
+  .form-row { margin-bottom: 12px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; display: block; }
+  .form-input { width: 100%; font-size: 14px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; background: var(--surface); color: var(--text); transition: border-color 0.15s; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .summary-box { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px; }
+  .summary-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .summary-row:last-child { margin-bottom: 0; font-weight: 600; font-size: 15px; padding-top: 6px; border-top: 1px solid var(--border); margin-top: 6px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: pointer; font-family: inherit; }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); width: 100%; justify-content: center; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-ghost { background: transparent; color: var(--muted); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .success { background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 2rem; text-align: center; display: none; margin-top: 12px; }
+  .success.active { display: block; }
+  .success-icon { font-size: 36px; margin-bottom: 12px; }
+  .success h2 { font-size: 18px; font-weight: 600; color: var(--green); margin-bottom: 6px; }
+  .success p { font-size: 14px; color: var(--green); }
+  .loading { text-align: center; padding: 3rem; color: var(--muted); font-size: 14px; }
+  .error { text-align: center; padding: 2rem; color: #dc2626; font-size: 14px; }
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; margin-top: 1.5rem; }
+  .section-label:first-of-type { margin-top: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">Split · Invitado</div>
+
+  <div id="loading" class="loading">Cargando cobro...</div>
+  <div id="error" class="error" style="display:none"></div>
+
+  <div id="main" style="display:none">
+    <h1>Paga tu parte</h1>
+    <p class="subtitle" id="subtitle">Selecciona el plato que te corresponde.</p>
+
+    <div class="section-label" id="label-available">Disponibles</div>
+    <div id="items-list"></div>
+
+    <div class="checkout" id="checkout">
+      <h2>Confirmar pago</h2>
+      <div class="summary-box">
+        <div class="summary-row"><span id="sum-name" style="color:var(--muted);flex:1;min-width:0;margin-right:8px"></span></div>
+        <div class="summary-row"><span>Total a pagar</span><span id="sum-amount" style="color:var(--accent)"></span></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Tu nombre *</label>
+        <input class="form-input" type="text" id="inp-name" placeholder="Ej: Lucía Torres" />
+      </div>
+      <button class="btn btn-primary" id="btn-confirm" onclick="confirmPago()">Confirmar pago</button>
+      <div style="text-align:center;margin-top:10px">
+        <button class="btn btn-ghost" style="font-size:13px" onclick="cancelSelect()">Cancelar</button>
+      </div>
+    </div>
+
+    <div class="success" id="success">
+      <div class="success-icon">✓</div>
+      <h2>¡Pago registrado!</h2>
+      <p id="success-msg"></p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const cobroId = params.get("id");
+const fmt = n => "S/ " + parseFloat(n).toFixed(2);
+
+let cobro = null;
+let pagos = {};
+let selectedKey = null;
+let paid = false;
+
+async function init() {
+  if (!cobroId) { showError("Link inválido. Pide el link correcto al organizador."); return; }
+  try {
+    const { data, error } = await db.from("bills").select("*").eq("id", cobroId).maybeSingle();
+    if (error) throw error;
+    if (!data) { showError("Cobro no encontrado. Verifica el link."); return; }
+    cobro = data;
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("main").style.display = "block";
+    await listenPagos();
+  } catch(e) {
+    showError("Error al cargar el cobro. Intenta de nuevo.");
+  }
+}
+
+// pagos = mapa { item_key: {name, ...} } para saber qué platos ya están tomados.
+async function listenPagos() {
+  const { data } = await db.from("payments").select("*").eq("bill_id", cobroId);
+  pagos = {};
+  (data || []).forEach(p => { pagos[p.item_key] = p; });
+  renderItems();
+
+  db.channel("guest-" + cobroId)
+    .on("postgres_changes",
+      { event: "INSERT", schema: "public", table: "payments", filter: "bill_id=eq." + cobroId },
+      payload => { pagos[payload.new.item_key] = payload.new; renderItems(); })
+    .subscribe();
+}
+
+function renderItems() {
+  const list = document.getElementById("items-list");
+  list.innerHTML = "";
+  cobro.items.forEach(item => {
+    const p = pagos[item.key];
+    const isTaken = !!p;
+    const isSelected = selectedKey === item.key;
+    const div = document.createElement("div");
+    div.className = "card" + (isTaken?" taken":"") + (isSelected?" selected":"");
+    if (!isTaken && !paid) div.onclick = () => selectItem(item.key);
+    div.innerHTML = `
+      <div class="card-header">
+        <div class="card-name">${item.name}</div>
+        <div class="card-price">${fmt(item.amount)}</div>
+      </div>
+      <div class="card-footer">
+        ${item.shared ? '<span class="badge badge-blue">Compartido</span>' : ''}
+        ${isTaken
+          ? `<span class="badge badge-green">✓ ${p.name}</span>`
+          : isSelected
+            ? '<span class="badge badge-amber">Seleccionado</span>'
+            : '<span class="badge badge-taken">Disponible</span>'
+        }
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function selectItem(key) {
+  if (paid) return;
+  selectedKey = key;
+  const item = cobro.items.find(i => i.key === key);
+  document.getElementById("sum-name").textContent = item.name;
+  document.getElementById("sum-amount").textContent = fmt(item.amount);
+  document.getElementById("checkout").classList.add("active");
+  document.getElementById("inp-name").focus();
+  renderItems();
+  document.getElementById("checkout").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
+function cancelSelect() {
+  selectedKey = null;
+  document.getElementById("checkout").classList.remove("active");
+  document.getElementById("inp-name").value = "";
+  renderItems();
+}
+
+async function confirmPago() {
+  const name = document.getElementById("inp-name").value.trim();
+  if (!name) { document.getElementById("inp-name").focus(); return; }
+  const item = cobro.items.find(i => i.key === selectedKey);
+  if (!item) return;
+
+  const btn = document.getElementById("btn-confirm");
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+
+  const { error } = await db.from("payments").insert({
+    bill_id: cobroId,
+    item_key: selectedKey,
+    name,
+    amount: item.amount,
+  });
+
+  if (error) {
+    // 23505 = clave duplicada: alguien tomó este plato un instante antes.
+    if (error.code === "23505") {
+      alert("¡Ups! Alguien acaba de pagar ese plato. Elige otro.");
+      cancelSelect();
+      renderItems();
+    } else {
+      alert("No se pudo registrar el pago: " + error.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "Confirmar pago";
+    return;
+  }
+
+  paid = true;
+  pagos[selectedKey] = { item_key: selectedKey, name, amount: item.amount };
+  document.getElementById("checkout").classList.remove("active");
+  document.getElementById("success").classList.add("active");
+  document.getElementById("success-msg").textContent = `${name}, tu pago de ${fmt(item.amount)} fue registrado. ¡Gracias!`;
+  document.getElementById("success").scrollIntoView({behavior:"smooth"});
+}
+
+function showError(msg) {
+  document.getElementById("loading").style.display = "none";
+  const el = document.getElementById("error");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+init();
+</script>
+</body>
+</html>

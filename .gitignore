@@ -1,0 +1,10 @@
+# Secretos: nunca subir
+.env
+.env.*
+
+# Dependencias (si algún día usas el CLI de Supabase)
+node_modules/
+
+# Sistema
+.DS_Store
+Thumbs.db
